@@ -8,10 +8,16 @@
     "build": "echo build"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@parcel/watcher", "bufferutil", "es5-ext", "utf-8-validate"]
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "bufferutil",
+      "es5-ext",
+      "utf-8-validate"
+    ]
   },
   "devDependencies": {
     "@salla.sa/twilight": "^2.14.429",
-    "@salla.sa/twilight-components": "^2.14.429"
+    "@salla.sa/twilight-components": "^2.14.429",
+    "sass": "^1.99.0"
   }
 }

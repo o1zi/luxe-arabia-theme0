@@ -125,7 +125,7 @@
   }
 }
 
-[dir="ltr"] @keyframes slideInFromStart {
+@keyframes slideInFromStart {
   from {
     opacity: 0;
     transform: translateX(-40px);
