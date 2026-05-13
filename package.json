@@ -1,0 +1,17 @@
+{
+  "name": "luxe-arabia-theme",
+  "version": "1.0.0",
+  "description": "Salla Theme - Luxe Arabia",
+  "license": "MIT",
+  "scripts": {
+    "dev": "salla theme serve",
+    "build": "echo build"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@parcel/watcher", "bufferutil", "es5-ext", "utf-8-validate"]
+  },
+  "devDependencies": {
+    "@salla.sa/twilight": "^2.14.429",
+    "@salla.sa/twilight-components": "^2.14.429"
+  }
+}
