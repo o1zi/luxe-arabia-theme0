@@ -321,5 +321,6 @@
             "selected": true,
             "required": false
         }
-    ]
+    ],
+    "components": []
 }
