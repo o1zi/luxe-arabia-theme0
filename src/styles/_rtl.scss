@@ -1,0 +1,69 @@
+// ═══════════════════════════════════════════
+// RTL — Full Right-to-Left Support
+// ═══════════════════════════════════════════
+// Using CSS Logical Properties throughout.
+// No hacks, no transforms — native RTL.
+
+// Logical direction helpers
+.ms-auto  { margin-inline-start: auto; }
+.me-auto  { margin-inline-end: auto; }
+.ps-4     { padding-inline-start: var(--space-4); }
+.pe-4     { padding-inline-end: var(--space-4); }
+.text-start { text-align: start; }
+.text-end   { text-align: end; }
+
+// Flexbox RTL-aware utilities
+.flex-row-reverse-rtl {
+  flex-direction: row;
+
+  [dir="rtl"] & {
+    flex-direction: row;
+  }
+}
+
+// Swiper RTL
+.swiper[dir="rtl"] {
+  direction: rtl;
+}
+
+// Form inputs — placeholder alignment
+input, textarea, select {
+  text-align: start;
+  font-family: var(--font-body);
+}
+
+// Icon position adjustments in RTL
+[dir="rtl"] .icon-start { margin-inline-end: var(--space-2); }
+[dir="rtl"] .icon-end   { margin-inline-start: var(--space-2); }
+
+// Breadcrumb separator flip in RTL
+[dir="rtl"] .breadcrumb__separator {
+  transform: scaleX(-1);
+}
+
+// Dropdown menus
+[dir="rtl"] .dropdown {
+  right: auto;
+  left: 0;
+}
+
+// Sidebar position
+[dir="rtl"] .sidebar {
+  border-right: none;
+  border-left: 1px solid var(--color-border);
+}
+
+// Number direction — always LTR for prices/numbers
+.num,
+.price,
+.countdown,
+[data-number] {
+  direction: ltr;
+  display: inline-block;
+  unicode-bidi: isolate;
+}
+
+// Cart badge
+.cart-count {
+  direction: ltr;
+}

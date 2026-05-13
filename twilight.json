@@ -1,0 +1,13 @@
+{
+  "name": "Luxe Arabia",
+  "version": "1.0.0",
+  "description": "ثيم فاخر ومتكامل للمتاجر الإلكترونية العربية",
+  "author": "Luxe Arabia Theme",
+  "engine": "twilight",
+  "tags": ["fashion", "luxury", "rtl", "arabic", "modern"],
+  "screenshots": {
+    "desktop": "screenshots/desktop.jpg",
+    "mobile": "screenshots/mobile.jpg"
+  },
+  "settings": "config/settings.json"
+}

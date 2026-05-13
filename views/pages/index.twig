@@ -1,0 +1,426 @@
+{% extends 'layouts/master' %}
+
+{% block title %}{{ store.name }} — {{ store.slogan | default('تسوق بذوق') }}{% endblock %}
+{% block description %}{{ store.description }}{% endblock %}
+
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+
+  {# ═══════════════════════ 1. Hero Slider ═══════════════════════ #}
+  {% if settings.show_hero %}
+    <section class="hero-slider" aria-label="{{ 'السلايدر الرئيسي' | trans }}">
+      <div class="swiper" id="hero-swiper">
+        <div class="swiper-wrapper">
+
+          {# Slide 1 — يمكن تخصيصها عبر لوحة الإعدادات #}
+          <div class="swiper-slide">
+            <img
+              class="hero-slider__bg"
+              src="{{ settings.hero_slide1_image | default(theme.url ~ '/assets/images/hero-default.jpg') }}"
+              alt="{{ settings.hero_slide1_title | default('') }}"
+              loading="eager"
+              fetchpriority="high"
+            >
+            <div class="hero-slider__overlay" aria-hidden="true"></div>
+            <div class="hero-slider__content container">
+              <div class="hero-slider__inner">
+                {% if settings.hero_slide1_label %}
+                  <span class="hero-slider__label">{{ settings.hero_slide1_label }}</span>
+                {% endif %}
+                <h1 class="hero-slider__title">
+                  {{ settings.hero_slide1_title | default('اكتشف أجمل الأزياء والأناقة') }}
+                </h1>
+                <p class="hero-slider__subtitle">
+                  {{ settings.hero_slide1_subtitle | default('تشكيلة حصرية من أرقى الماركات العالمية بأسعار تناسبك') }}
+                </p>
+                <div class="hero-slider__actions">
+                  <a href="{{ settings.hero_slide1_btn1_url | default(store.urls.products) }}" class="btn btn--accent btn--lg">
+                    {{ settings.hero_slide1_btn1_text | default('تسوق الآن') }}
+                  </a>
+                  <a href="{{ settings.hero_slide1_btn2_url | default(store.urls.about) }}" class="btn btn--outline btn--lg" style="border-color:rgba(255,255,255,.6);color:#fff">
+                    {{ settings.hero_slide1_btn2_text | default('تعرف علينا') }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {# Additional slides can be added here #}
+
+        </div>
+        <div class="swiper-pagination" aria-hidden="true"></div>
+        <button class="swiper-button-prev" aria-label="{{ 'السابق' | trans }}"></button>
+        <button class="swiper-button-next" aria-label="{{ 'التالي' | trans }}"></button>
+      </div>
+    </section>
+  {% endif %}
+
+  {# ═══════════════════════ 2. Features Bar ═══════════════════════ #}
+  {% if settings.show_features_bar %}
+    <div class="features-bar">
+      <div class="container">
+        <div class="features-bar__grid" role="list">
+
+          <div class="features-bar__item" role="listitem">
+            <div class="features-bar__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="features-bar__title">{{ 'شحن مجاني' | trans }}</p>
+              <p class="features-bar__desc">{{ 'على الطلبات فوق 200 ريال' | trans }}</p>
+            </div>
+          </div>
+
+          <div class="features-bar__item" role="listitem">
+            <div class="features-bar__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="features-bar__title">{{ 'ضمان الجودة' | trans }}</p>
+              <p class="features-bar__desc">{{ 'منتجات أصلية 100%' | trans }}</p>
+            </div>
+          </div>
+
+          <div class="features-bar__item" role="listitem">
+            <div class="features-bar__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <p class="features-bar__title">{{ 'دفع آمن' | trans }}</p>
+              <p class="features-bar__desc">{{ 'جميع طرق الدفع مقبولة' | trans }}</p>
+            </div>
+          </div>
+
+          <div class="features-bar__item" role="listitem">
+            <div class="features-bar__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="features-bar__title">{{ 'إرجاع سهل' | trans }}</p>
+              <p class="features-bar__desc">{{ 'خلال 14 يوم من الاستلام' | trans }}</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {# ═══════════════════════ 3. Categories Grid ═══════════════════════ #}
+  {% if settings.show_categories and categories | length > 0 %}
+    <section class="section" aria-labelledby="categories-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">{{ 'تصفح حسب' | trans }}</span>
+          <h2 class="section-title" id="categories-title">{{ 'التصنيفات' | trans }}</h2>
+        </div>
+
+        <div class="categories-grid" role="list">
+          {% for category in categories | slice(0, 12) %}
+            <a
+              href="{{ category.url }}"
+              class="category-card"
+              role="listitem"
+              aria-label="{{ category.name }}"
+            >
+              <img
+                src="{{ category.image | default(theme.url ~ '/assets/images/category-placeholder.jpg') }}"
+                alt="{{ category.name }}"
+                loading="lazy"
+                decoding="async"
+              >
+              <div class="category-card__name">
+                {{ category.name }}
+                {% if category.products_count %}
+                  <span class="category-card__count">{{ category.products_count }} {{ 'منتج' | trans }}</span>
+                {% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+  {# ═══════════════════════ 4. New Products ═══════════════════════ #}
+  {% if settings.show_new_products %}
+    {% set new_products = products({ type: 'newest', limit: settings.new_products_count | default(8) }) %}
+    {% if new_products | length > 0 %}
+      <section class="section" style="background: var(--color-bg-alt)" aria-labelledby="new-products-title">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">{{ 'وصل حديثاً' | trans }}</span>
+            <h2 class="section-title" id="new-products-title">{{ 'أحدث المنتجات' | trans }}</h2>
+          </div>
+
+          <div class="products-grid cols-{{ settings.product_columns_desktop | default(4) }}">
+            {% for product in new_products %}
+              {% include 'components/product-card' %}
+            {% endfor %}
+          </div>
+
+          <div style="text-align:center;margin-top:var(--space-7)">
+            <a href="{{ store.urls.products }}" class="btn btn--outline btn--lg">
+              {{ 'عرض جميع المنتجات' | trans }}
+            </a>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+  {% endif %}
+
+  {# ═══════════════════════ 5. Promotional Banner ═══════════════════════ #}
+  {% if settings.promo_banner_image %}
+    <div class="container">
+      <div class="promo-banner" style="background: {{ settings.promo_banner_bg | default('#1A1A2E') }}">
+        <img
+          src="{{ settings.promo_banner_image }}"
+          alt="{{ settings.promo_banner_title | default('عرض خاص') }}"
+          loading="lazy"
+        >
+        <div class="promo-banner__content">
+          <div class="promo-banner__text">
+            {% if settings.promo_banner_label %}
+              <p class="promo-banner__label">{{ settings.promo_banner_label }}</p>
+            {% endif %}
+            {% if settings.promo_banner_title %}
+              <h2 class="promo-banner__title">{{ settings.promo_banner_title }}</h2>
+            {% endif %}
+            {% if settings.promo_banner_btn_url %}
+              <a href="{{ settings.promo_banner_btn_url }}" class="btn btn--accent btn--lg">
+                {{ settings.promo_banner_btn_text | default('تسوق الآن') }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {# ═══════════════════════ 6. Bestsellers ═══════════════════════ #}
+  {% if settings.show_bestsellers %}
+    {% set best_products = products({ type: 'top', limit: 8 }) %}
+    {% if best_products | length > 0 %}
+      <section class="section" aria-labelledby="bestsellers-title">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">{{ 'الأكثر طلباً' | trans }}</span>
+            <h2 class="section-title" id="bestsellers-title">{{ 'الأكثر مبيعاً' | trans }}</h2>
+          </div>
+
+          <div class="swiper products-swiper" id="bestsellers-swiper">
+            <div class="swiper-wrapper">
+              {% for product in best_products %}
+                <div class="swiper-slide">
+                  {% include 'components/product-card' %}
+                </div>
+              {% endfor %}
+            </div>
+            <div class="swiper-pagination" aria-hidden="true"></div>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+  {% endif %}
+
+  {# ═══════════════════════ 7. Daily Deals (Countdown) ═══════════════════════ #}
+  {% if settings.show_daily_deals %}
+    {% set sale_products = products({ type: 'sale', limit: 8 }) %}
+    {% if sale_products | length > 0 %}
+      <section class="countdown-section" aria-labelledby="deals-title">
+        <div class="container">
+          <div class="countdown-section__header">
+            <div>
+              <span class="section-label" style="color:var(--color-accent-light)">{{ 'لوقت محدود' | trans }}</span>
+              <h2 class="countdown-section__title" id="deals-title">🔥 {{ 'عروض اليوم' | trans }}</h2>
+            </div>
+            <div
+              class="countdown-timer"
+              data-countdown="{{ settings.deals_end_date | default('now' | date_modify('+1 day') | date('Y-m-d')) }}"
+              aria-live="polite"
+              aria-label="{{ 'العد التنازلي للعرض' | trans }}"
+            >
+              <div class="countdown-timer__unit">
+                <span class="countdown-timer__number num" data-countdown-hours>00</span>
+                <span class="countdown-timer__label">{{ 'ساعة' | trans }}</span>
+              </div>
+              <span class="countdown-timer__sep" aria-hidden="true">:</span>
+              <div class="countdown-timer__unit">
+                <span class="countdown-timer__number num" data-countdown-minutes>00</span>
+                <span class="countdown-timer__label">{{ 'دقيقة' | trans }}</span>
+              </div>
+              <span class="countdown-timer__sep" aria-hidden="true">:</span>
+              <div class="countdown-timer__unit">
+                <span class="countdown-timer__number num" data-countdown-seconds>00</span>
+                <span class="countdown-timer__label">{{ 'ثانية' | trans }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="products-grid cols-{{ settings.product_columns_desktop | default(4) }}">
+            {% for product in sale_products %}
+              {% include 'components/product-card' %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+  {% endif %}
+
+  {# ═══════════════════════ 8. Testimonials ═══════════════════════ #}
+  {% if settings.show_testimonials %}
+    <section class="section testimonials" aria-labelledby="testimonials-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">{{ 'آراء العملاء' | trans }}</span>
+          <h2 class="section-title" id="testimonials-title">{{ 'ماذا يقول عملاؤنا' | trans }}</h2>
+        </div>
+
+        <div class="swiper" id="testimonials-swiper">
+          <div class="swiper-wrapper">
+
+            {# Static testimonials — يُفضل ربطها بنظام مراجعات سلة #}
+            {% set testimonials = [
+              { name: 'سارة أحمد', location: 'الرياض', text: 'تجربة تسوق رائعة! الجودة فاقت توقعاتي والشحن كان سريعاً جداً. سأتسوق مجدداً بالتأكيد.', rating: 5, avatar: '' },
+              { name: 'محمد العلي', location: 'جدة', text: 'منتجات أصلية وبأسعار منافسة. خدمة العملاء ممتازة وردوا على استفساراتي بسرعة.', rating: 5, avatar: '' },
+              { name: 'فاطمة الزهراني', location: 'الدمام', text: 'أنصح الجميع بالتسوق من هنا. التغليف أنيق والمنتج وصل سليماً وبوقته.', rating: 5, avatar: '' },
+            ] %}
+
+            {% for t in testimonials %}
+              <div class="swiper-slide">
+                <div class="testimonials__card">
+                  <p class="testimonials__stars" aria-label="{{ t.rating }} {{ 'نجوم' | trans }}">
+                    {% for i in 1..t.rating %}★{% endfor %}
+                  </p>
+                  <p class="testimonials__text">{{ t.text }}</p>
+                  <div class="testimonials__author">
+                    {% if t.avatar %}
+                      <img src="{{ t.avatar }}" alt="{{ t.name }}" width="44" height="44" loading="lazy">
+                    {% else %}
+                      <div style="width:44px;height:44px;border-radius:50%;background:var(--color-accent);display:flex;align-items:center;justify-content:center;color:var(--color-primary);font-weight:800;font-size:.9rem" aria-hidden="true">
+                        {{ t.name | first }}
+                      </div>
+                    {% endif %}
+                    <div>
+                      <p class="testimonials__name">{{ t.name }}</p>
+                      <p class="testimonials__meta">{{ t.location }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+          </div>
+          <div class="swiper-pagination" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+  {# ═══════════════════════ 9. Blog Posts ═══════════════════════ #}
+  {% if settings.show_blog %}
+    {% set blog_posts = posts({ limit: 3 }) %}
+    {% if blog_posts | length > 0 %}
+      <section class="section blog-posts" style="background:var(--color-bg-alt)" aria-labelledby="blog-title">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">{{ 'أفكار وإلهام' | trans }}</span>
+            <h2 class="section-title" id="blog-title">{{ 'آخر المقالات' | trans }}</h2>
+          </div>
+
+          <div class="blog-posts__grid">
+            {% for post in blog_posts %}
+              <article class="blog-card">
+                {% if post.image %}
+                  <div class="blog-card__image">
+                    <a href="{{ post.url }}">
+                      <img src="{{ post.image }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+                    </a>
+                  </div>
+                {% endif %}
+                <div class="blog-card__content">
+                  {% if post.category %}
+                    <span class="blog-card__category">{{ post.category.name }}</span>
+                  {% endif %}
+                  <h3 class="blog-card__title">
+                    <a href="{{ post.url }}">{{ post.title }}</a>
+                  </h3>
+                  <div class="blog-card__meta">
+                    <span>{{ post.author.name }}</span>
+                    <span>·</span>
+                    <time datetime="{{ post.created_at | date('Y-m-d') }}">{{ post.created_at | date('d M Y') }}</time>
+                  </div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+
+          <div style="text-align:center;margin-top:var(--space-7)">
+            <a href="{{ store.urls.blog }}" class="btn btn--outline btn--lg">
+              {{ 'جميع المقالات' | trans }}
+            </a>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+  {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Hero Swiper
+  new Swiper('#hero-swiper', {
+    loop: true,
+    autoplay: { delay: 5000, disableOnInteraction: false },
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+    speed: 800,
+    rtl: document.documentElement.dir === 'rtl',
+  });
+
+  // Bestsellers Swiper
+  new Swiper('#bestsellers-swiper', {
+    slidesPerView: 1.2,
+    spaceBetween: 16,
+    pagination: { el: '#bestsellers-swiper .swiper-pagination', clickable: true },
+    rtl: document.documentElement.dir === 'rtl',
+    breakpoints: {
+      480:  { slidesPerView: 2.2 },
+      768:  { slidesPerView: 3.2 },
+      1024: { slidesPerView: 4, spaceBetween: 24 },
+    },
+  });
+
+  // Testimonials Swiper
+  new Swiper('#testimonials-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    autoplay: { delay: 4000 },
+    pagination: { el: '#testimonials-swiper .swiper-pagination', clickable: true },
+    rtl: document.documentElement.dir === 'rtl',
+    breakpoints: {
+      768:  { slidesPerView: 2 },
+      1024: { slidesPerView: 3 },
+    },
+  });
+
+});
+</script>
+{% endblock %}

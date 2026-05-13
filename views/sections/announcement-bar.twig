@@ -1,0 +1,30 @@
+{# Announcement Bar — شريط الإشعارات #}
+<div
+  class="announcement-bar"
+  id="announcement-bar"
+  style="background: {{ settings.announcement_bar_bg | default('#1A1A2E') }}; color: {{ settings.announcement_bar_color | default('#C9A84C') }};"
+  role="banner"
+  aria-label="{{ 'شريط الإشعارات' | trans }}"
+>
+  <p class="announcement-bar__text">
+    {{ settings.announcement_bar_text | default('🎉 شحن مجاني على الطلبات فوق 200 ريال') }}
+  </p>
+
+  <button
+    class="announcement-bar__close"
+    id="close-announcement"
+    aria-label="{{ 'إغلاق شريط الإشعارات' | trans }}"
+    onclick="document.getElementById('announcement-bar').style.display='none'; sessionStorage.setItem('barClosed','1');"
+  >
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  if (sessionStorage.getItem('barClosed') === '1') {
+    var bar = document.getElementById('announcement-bar');
+    if (bar) bar.style.display = 'none';
+  }
+</script>

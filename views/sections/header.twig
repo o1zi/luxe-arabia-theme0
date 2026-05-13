@@ -1,0 +1,231 @@
+{# Site Header — هيدر الموقع #}
+<header
+  class="site-header{% if settings.header_style == 'transparent' %} transparent{% endif %}"
+  id="site-header"
+  role="banner"
+>
+  <div class="site-header__inner">
+
+    {# Hamburger (Mobile) #}
+    <button
+      class="hamburger"
+      id="hamburger"
+      aria-label="{{ 'فتح القائمة' | trans }}"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    {# Logo #}
+    <a class="site-logo" href="{{ store.url }}" aria-label="{{ store.name }}">
+      {% if store.logo %}
+        <img
+          src="{{ store.logo }}"
+          alt="{{ store.name }}"
+          width="160"
+          height="44"
+          loading="eager"
+          fetchpriority="high"
+        >
+      {% else %}
+        <span style="font-size:1.5rem;font-weight:900;color:var(--color-primary)">{{ store.name }}</span>
+      {% endif %}
+    </a>
+
+    {# Desktop Navigation #}
+    <nav class="site-nav" aria-label="{{ 'التنقل الرئيسي' | trans }}">
+      <ul class="nav__list" role="list">
+
+        {% for item in menus.header.items %}
+          <li class="nav__item">
+
+            {% if item.children %}
+              {# Item with Mega Menu or Dropdown #}
+              <button
+                class="nav__link"
+                aria-haspopup="true"
+                aria-expanded="false"
+                id="nav-item-{{ loop.index }}"
+              >
+                {{ item.name }}
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              {% if item.children | length >= 8 %}
+                {# Mega Menu #}
+                <div class="mega-menu" role="region" aria-labelledby="nav-item-{{ loop.index }}">
+                  {% set chunked = item.children | batch(4) %}
+                  {% for column in chunked %}
+                    <div>
+                      {% if loop.first %}
+                        <p class="mega-menu__column-title">{{ item.name }}</p>
+                      {% endif %}
+                      {% for child in column %}
+                        <a class="mega-menu__link" href="{{ child.url }}">{{ child.name }}</a>
+                      {% endfor %}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                {# Dropdown Menu #}
+                <div class="dropdown-menu" role="menu">
+                  {% for child in item.children %}
+                    <a class="dropdown-menu__item" href="{{ child.url }}" role="menuitem">{{ child.name }}</a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+            {% else %}
+              <a
+                class="nav__link {% if page.url == item.url %}active{% endif %}"
+                href="{{ item.url }}"
+                {% if item.is_external %}target="_blank" rel="noopener noreferrer"{% endif %}
+              >
+                {{ item.name }}
+              </a>
+            {% endif %}
+
+          </li>
+        {% endfor %}
+
+      </ul>
+    </nav>
+
+    {# Header Actions #}
+    <div class="header-actions">
+
+      {# Search #}
+      <button
+        class="header-icon"
+        id="search-trigger"
+        aria-label="{{ 'البحث' | trans }}"
+        aria-expanded="false"
+        aria-controls="search-overlay"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="m16 16 4 4" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      {# Compare #}
+      <a class="header-icon" href="{{ store.urls.compare }}" aria-label="{{ 'المقارنة' | trans }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-linecap="round"/>
+        </svg>
+      </a>
+
+      {# Wishlist #}
+      <a class="header-icon" href="{{ store.urls.wishlist }}" aria-label="{{ 'المفضلة' | trans }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        {% if customer.wishlist.count > 0 %}
+          <span class="count" aria-label="{{ customer.wishlist.count }} {{ 'منتج' | trans }}">{{ customer.wishlist.count }}</span>
+        {% endif %}
+      </a>
+
+      {# Cart #}
+      <button
+        class="header-icon"
+        id="cart-trigger"
+        aria-label="{{ 'السلة' | trans }}: {{ cart.count | default(0) }} {{ 'منتجات' | trans }}"
+        aria-expanded="false"
+        aria-controls="cart-drawer"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/>
+          <path d="M16 10a4 4 0 0 1-8 0" stroke-linecap="round"/>
+        </svg>
+        <span class="count cart-count" {% if not cart.count %}style="display:none"{% endif %} aria-live="polite">
+          {{ cart.count | default('') }}
+        </span>
+      </button>
+
+      {# Customer Account #}
+      {% if customer %}
+        <a class="header-icon" href="{{ customer.url }}" aria-label="{{ 'حسابي' | trans }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+      {% else %}
+        <a class="header-icon" href="{{ store.urls.login }}" aria-label="{{ 'تسجيل الدخول' | trans }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      {% endif %}
+
+    </div>{# /.header-actions #}
+  </div>{# /.site-header__inner #}
+</header>
+
+{# Search Overlay #}
+<div class="search-overlay" id="search-overlay" role="dialog" aria-label="{{ 'البحث' | trans }}" aria-modal="true">
+  <div class="search-overlay__box">
+    <form class="search-overlay__input-wrap" action="{{ store.urls.search }}" method="get">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><path d="m16 16 4 4" stroke-linecap="round"/>
+      </svg>
+      <input
+        class="search-overlay__input"
+        type="search"
+        name="q"
+        id="search-input"
+        placeholder="{{ 'ابحث عن منتجات...' | trans }}"
+        autocomplete="off"
+        aria-label="{{ 'البحث' | trans }}"
+        autofocus
+      >
+      <button type="submit" class="btn btn--primary btn--sm">{{ 'بحث' | trans }}</button>
+    </form>
+    <div class="search-overlay__results" id="search-results" role="listbox" aria-label="{{ 'نتائج البحث' | trans }}">
+      {# Results injected via JS live search #}
+    </div>
+  </div>
+</div>
+
+{# Mobile Navigation #}
+<nav class="mobile-nav" id="mobile-nav" aria-label="{{ 'التنقل المحمول' | trans }}" aria-hidden="true">
+  <div class="mobile-nav__header">
+    {% if store.logo %}
+      <img src="{{ store.logo }}" alt="{{ store.name }}" height="36">
+    {% else %}
+      <span style="font-weight:900;color:var(--color-primary)">{{ store.name }}</span>
+    {% endif %}
+    <button id="close-mobile-nav" aria-label="{{ 'إغلاق القائمة' | trans }}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <ul class="mobile-nav__list" role="list">
+    {% for item in menus.header.items %}
+      <li class="mobile-nav__item">
+        {% if item.children %}
+          <button class="mobile-nav__link" aria-expanded="false" data-toggle-sub>
+            {{ item.name }}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="mobile-nav__sub">
+            {% for child in item.children %}
+              <a href="{{ child.url }}">{{ child.name }}</a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <a class="mobile-nav__link" href="{{ item.url }}">{{ item.name }}</a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

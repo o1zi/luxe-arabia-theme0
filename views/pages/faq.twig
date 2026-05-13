@@ -1,0 +1,89 @@
+{% extends 'layouts/master' %}
+{% block title %}{{ 'الأسئلة الشائعة' | trans }} — {{ store.name }}{% endblock %}
+{% block body_class %}page-faq{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:800px;padding-block:var(--space-9)">
+  <div class="section-header" style="text-align:start">
+    <span class="section-label">{{ 'مساعدة' | trans }}</span>
+    <h1 class="section-title">{{ 'الأسئلة الشائعة' | trans }}</h1>
+    <p style="color:var(--color-text-muted);margin-top:var(--space-3)">
+      {{ 'لم تجد إجابتك؟' | trans }}
+      <a href="{{ store.urls.contact }}" style="color:var(--color-accent)">{{ 'تواصل معنا' | trans }}</a>
+    </p>
+  </div>
+
+  <div style="margin-top:var(--space-7)" role="list">
+
+    {% set faqs = [
+      {
+        q: 'كيف يمكنني تتبع طلبي؟',
+        a: 'يمكنك تتبع طلبك بالدخول إلى حسابك والنقر على "طلباتي". ستجد رابط تتبع الشحنة في تفاصيل الطلب.'
+      },
+      {
+        q: 'ما هي طرق الدفع المتاحة؟',
+        a: 'نقبل: مدى، فيزا، ماستركارد، STC Pay، Apple Pay، وتابي وتمارا للدفع بالتقسيط.'
+      },
+      {
+        q: 'ما هي سياسة الإرجاع والاستبدال؟',
+        a: 'يمكنك إرجاع أي منتج خلال 14 يوماً من تاريخ الاستلام بشرط أن يكون بحالته الأصلية وبعبوته وبدون استخدام.'
+      },
+      {
+        q: 'هل الشحن مجاني؟',
+        a: 'نعم، الشحن مجاني لجميع الطلبات التي تتجاوز 200 ريال. للطلبات الأقل، رسوم الشحن تبدأ من 20 ريال.'
+      },
+      {
+        q: 'كم يستغرق وصول الطلب؟',
+        a: 'عادةً 2-5 أيام عمل للمناطق الرئيسية في المملكة. 5-7 أيام عمل للمناطق النائية.'
+      },
+      {
+        q: 'كيف يمكنني التواصل مع خدمة العملاء؟',
+        a: 'يمكنك التواصل معنا عبر واتساب أو الهاتف من الأحد إلى الخميس 9 صباحاً حتى 6 مساءً، أو عبر البريد الإلكتروني في أي وقت.'
+      },
+    ] %}
+
+    {% for faq in faqs %}
+      <div
+        class="filter-group"
+        role="listitem"
+        style="border:1px solid var(--color-border-light);border-radius:var(--radius-md);margin-bottom:var(--space-3);overflow:hidden"
+      >
+        <button
+          class="filter-group__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="faq-{{ loop.index }}"
+          style="width:100%;text-align:start"
+          id="faq-btn-{{ loop.index }}"
+        >
+          {{ faq.q }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div
+          class="filter-group__body"
+          id="faq-{{ loop.index }}"
+          role="region"
+          aria-labelledby="faq-btn-{{ loop.index }}"
+        >
+          <p style="color:var(--color-text-muted);line-height:1.8">{{ faq.a }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.filter-group__toggle').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const expanded = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', !expanded);
+    const body = document.getElementById(this.getAttribute('aria-controls'));
+    body?.classList.toggle('open', !expanded);
+  });
+});
+</script>
+{% endblock %}

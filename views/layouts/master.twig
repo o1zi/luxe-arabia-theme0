@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="{{ store.language.code }}" dir="{{ store.language.direction }}" data-theme="{{ settings.dark_mode ? 'dark' : 'light' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  {# SEO Meta #}
+  <title>{% block title %}{{ page.title }} — {{ store.name }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ page.description | default(store.description) }}{% endblock %}">
+  <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+
+  {# Canonical & hreflang for multilingual SEO #}
+  <link rel="canonical" href="{{ page.url }}">
+  {% if store.languages | length > 1 %}
+    {% for lang in store.languages %}
+      <link rel="alternate" hreflang="{{ lang.code }}" href="{{ lang.url }}">
+    {% endfor %}
+  {% endif %}
+
+  {# Open Graph #}
+  <meta property="og:type"        content="{% block og_type %}website{% endblock %}">
+  <meta property="og:title"       content="{{ self.title() }}">
+  <meta property="og:description" content="{{ self.description() }}">
+  <meta property="og:url"         content="{{ page.url }}">
+  <meta property="og:site_name"   content="{{ store.name }}">
+  <meta property="og:image"       content="{% block og_image %}{{ store.logo }}{% endblock %}">
+  <meta property="og:locale"      content="{{ store.language.locale }}">
+  <meta name="twitter:card"       content="summary_large_image">
+
+  {# Favicon #}
+  <link rel="icon" type="image/x-icon" href="{{ store.favicon | default(theme.url ~ '/assets/favicon.ico') }}">
+  <link rel="apple-touch-icon"    href="{{ store.favicon }}">
+
+  {# Preconnect & Font Loading #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family={{ settings.font_heading | default('Tajawal') | url_encode }}:wght@400;500;700;800;900&family={{ settings.font_body | default('Tajawal') | url_encode }}:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  {# Theme CSS — inject CSS variables from settings #}
+  <style>
+    :root {
+      --color-primary:      {{ settings.color_primary      | default('#1A1A2E') }};
+      --color-secondary:    {{ settings.color_secondary    | default('#F5F0E8') }};
+      --color-accent:       {{ settings.color_accent       | default('#C9A84C') }};
+      --color-bg:           {{ settings.color_background   | default('#FFFFFF') }};
+      --color-text:         {{ settings.color_text_primary | default('#1A1A1A') }};
+      --color-text-muted:   {{ settings.color_text_secondary | default('#6B6B6B') }};
+      --font-heading:       '{{ settings.font_heading | default('Tajawal') }}', sans-serif;
+      --font-body:          '{{ settings.font_body    | default('Tajawal') }}', sans-serif;
+      --font-size-base:     {{ settings.font_size_base | default(16) }}px;
+      --footer-bg:          {{ settings.footer_bg     | default('#1A1A2E') }};
+      --footer-text:        {{ settings.footer_text_color | default('#FFFFFF') }};
+    }
+  </style>
+
+  {# Main Stylesheet #}
+  {{ 'styles/main.css' | asset_url | stylesheet_tag }}
+
+  {# Swiper CSS #}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  {% block head %}{% endblock %}
+
+  {# Google Tag Manager #}
+  {% if settings.gtm_id %}
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{{ settings.gtm_id }}');</script>
+  {% endif %}
+
+  {# Meta Pixel #}
+  {% if settings.meta_pixel_id %}
+  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{{ settings.meta_pixel_id }}');fbq('track','PageView');</script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{ settings.meta_pixel_id }}&ev=PageView&noscript=1"/></noscript>
+  {% endif %}
+
+  {# Snapchat Pixel #}
+  {% if settings.snapchat_pixel_id %}
+  <script type='text/javascript'>(function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function(){a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};a.queue=[];var s='script';r=t.createElement(s);r.async=!0;r.src=n;var u=t.getElementsByTagName(s)[0];u.parentNode.insertBefore(r,u);})(window,document,'https://sc-static.net/scevent.min.js');snaptr('init','{{ settings.snapchat_pixel_id }}',{'user_email':'__INSERT_USER_EMAIL__'});snaptr('track','PAGE_VIEW');</script>
+  {% endif %}
+
+  {# TikTok Pixel #}
+  {% if settings.tiktok_pixel_id %}
+  <script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};ttq.load('{{ settings.tiktok_pixel_id }}');ttq.page();}(window,document,'ttq');</script>
+  {% endif %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}" x-data="{}">
+
+  {# GTM NoScript #}
+  {% if settings.gtm_id %}
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.gtm_id }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  {% endif %}
+
+  {# Skip Navigation — Accessibility #}
+  <a class="skip-link" href="#main-content">{{ 'الانتقال إلى المحتوى الرئيسي' | trans }}</a>
+
+  {# Announcement Bar #}
+  {% if settings.announcement_bar_enabled %}
+    {% include 'sections/announcement-bar' %}
+  {% endif %}
+
+  {# Header #}
+  {% include 'sections/header' %}
+
+  {# Main Content #}
+  <main id="main-content" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {# Footer #}
+  {% include 'sections/footer' %}
+
+  {# WhatsApp Float Button #}
+  {% if settings.show_whatsapp_button and settings.whatsapp_number %}
+    <a
+      href="https://wa.me/{{ settings.whatsapp_number }}"
+      class="whatsapp-float"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="{{ 'تواصل عبر واتساب' | trans }}"
+    >
+      {% include 'components/icons/whatsapp' %}
+    </a>
+  {% endif %}
+
+  {# Cart Drawer #}
+  {% include 'sections/cart-drawer' %}
+
+  {# Toast Notification #}
+  <div class="toast" id="toast" role="alert" aria-live="polite" aria-atomic="true">
+    {% include 'components/icons/check' %}
+    <span id="toast-message"></span>
+  </div>
+
+  {# Nav Overlay #}
+  <div class="nav-overlay" id="nav-overlay" aria-hidden="true"></div>
+
+  {# Page Transition #}
+  <div class="page-transition" id="page-transition" aria-hidden="true"></div>
+
+  {# Scripts #}
+  {# Alpine.js #}
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  {# Swiper.js #}
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+
+  {# Main JS #}
+  {{ 'js/main.js' | asset_url | script_tag('defer') }}
+
+  {# Salla Events Integration #}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cart updated
+      Salla.event.on('cart.updated', function(cart) {
+        const countEl = document.querySelectorAll('.cart-count');
+        countEl.forEach(el => el.textContent = cart.count || '');
+        window.luxeCart && window.luxeCart.refresh();
+      });
+
+      // Product added to cart
+      Salla.event.on('cart.item.added', function(item) {
+        window.showToast('{{ 'تمت الإضافة إلى السلة' | trans }}');
+      });
+
+      // Wishlist toggled
+      Salla.event.on('wishlist.toggled', function(data) {
+        const btn = document.querySelector(`[data-wishlist-id="${data.product_id}"]`);
+        if (btn) btn.classList.toggle('active', data.in_wishlist);
+      });
+    });
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,90 @@
+{# Cart Drawer — سلة التسوق المنزلقة #}
+<div
+  class="cart-drawer"
+  id="cart-drawer"
+  role="dialog"
+  aria-label="{{ 'سلة التسوق' | trans }}"
+  aria-modal="true"
+  aria-hidden="true"
+>
+  <div class="cart-drawer__header">
+    <h3>
+      {{ 'سلة التسوق' | trans }}
+      <span class="cart-count" style="font-size:.8rem;font-weight:400;color:var(--color-text-muted)">({{ cart.count | default(0) }} {{ 'منتج' | trans }})</span>
+    </h3>
+    <button id="close-cart" aria-label="{{ 'إغلاق السلة' | trans }}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="cart-drawer__body" id="cart-drawer-items">
+    {% if cart.items | length > 0 %}
+      {% for item in cart.items %}
+        <div class="cart-drawer__item" data-item-id="{{ item.id }}">
+          <a href="{{ item.product.url }}">
+            <img
+              src="{{ item.product.thumbnail | default(theme.url ~ '/assets/images/placeholder.jpg') }}"
+              alt="{{ item.product.name }}"
+              width="70"
+              height="70"
+              loading="lazy"
+            >
+          </a>
+          <div>
+            <p class="cart-drawer__item-name">
+              <a href="{{ item.product.url }}">{{ item.product.name }}</a>
+            </p>
+            {% if item.options | length > 0 %}
+              <p style="font-size:.75rem;color:var(--color-text-muted)">
+                {% for opt in item.options %}{{ opt.name }}: {{ opt.value }}{% if not loop.last %} · {% endif %}{% endfor %}
+              </p>
+            {% endif %}
+            <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+              <span class="cart-drawer__item-price num">{{ item.price.formatted }}</span>
+              <span style="font-size:.8rem;color:var(--color-text-muted)">x {{ item.quantity }}</span>
+            </div>
+          </div>
+          <button
+            class="cart-drawer__remove"
+            data-remove-item="{{ item.id }}"
+            aria-label="{{ 'حذف' | trans }} {{ item.product.name }}"
+            style="color:var(--color-text-muted);align-self:flex-start;padding:4px"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="text-align:center;padding:48px 24px;color:var(--color-text-muted)">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin:0 auto 16px;opacity:.3" aria-hidden="true">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <p style="font-weight:700;color:var(--color-text);margin-bottom:8px">{{ 'سلتك فارغة' | trans }}</p>
+        <p>{{ 'أضف منتجات لتبدأ التسوق' | trans }}</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="cart-drawer__footer">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span style="font-weight:700">{{ 'المجموع' | trans }}</span>
+      <span style="font-size:1.25rem;font-weight:900;color:var(--color-primary)" class="num">{{ cart.totals.subtotal.formatted }}</span>
+    </div>
+    <p style="font-size:.8rem;color:var(--color-text-muted);margin-bottom:16px">
+      {{ 'الشحن والضريبة تُحسب عند الدفع' | trans }}
+    </p>
+    <a href="{{ store.urls.checkout }}" class="btn btn--accent btn--full btn--lg">
+      {{ 'إتمام الشراء' | trans }}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <a href="{{ store.urls.cart }}" style="display:block;text-align:center;margin-top:10px;font-size:.875rem;color:var(--color-text-muted);text-decoration:underline">
+      {{ 'عرض السلة كاملة' | trans }}
+    </a>
+  </div>
+</div>

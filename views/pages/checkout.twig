@@ -1,0 +1,230 @@
+{% extends 'layouts/master' %}
+{% block title %}{{ 'إتمام الشراء' | trans }} — {{ store.name }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block body_class %}page-checkout{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-block:var(--space-8)">
+
+  <h1 style="font-size:clamp(1.25rem,3vw,1.75rem);font-weight:900;text-align:center;margin-bottom:var(--space-7)">
+    {{ 'إتمام الشراء' | trans }}
+  </h1>
+
+  {# Steps Progress #}
+  <div class="checkout-steps" role="list" aria-label="{{ 'خطوات الدفع' | trans }}">
+    <div class="checkout-steps__step active" role="listitem">
+      <span class="checkout-steps__step-num">1</span>
+      <span class="checkout-steps__step-label">{{ 'معلوماتك' | trans }}</span>
+    </div>
+    <div class="checkout-steps__divider" aria-hidden="true"></div>
+    <div class="checkout-steps__step" role="listitem">
+      <span class="checkout-steps__step-num">2</span>
+      <span class="checkout-steps__step-label">{{ 'الشحن' | trans }}</span>
+    </div>
+    <div class="checkout-steps__divider" aria-hidden="true"></div>
+    <div class="checkout-steps__step" role="listitem">
+      <span class="checkout-steps__step-num">3</span>
+      <span class="checkout-steps__step-label">{{ 'الدفع' | trans }}</span>
+    </div>
+  </div>
+
+  <div class="checkout-layout">
+
+    {# Checkout Form #}
+    <div>
+      <form id="checkout-form" novalidate>
+
+        {# Contact Info #}
+        <div class="checkout-form" style="margin-bottom:var(--space-5)">
+          <h2 class="checkout-form__section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            {{ 'معلومات التواصل' | trans }}
+          </h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="co-first-name">{{ 'الاسم الأول' | trans }} *</label>
+              <input class="form-input" type="text" id="co-first-name" name="first_name" required autocomplete="given-name" value="{{ customer.first_name | default('') }}">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="co-last-name">{{ 'الاسم الأخير' | trans }} *</label>
+              <input class="form-input" type="text" id="co-last-name" name="last_name" required autocomplete="family-name" value="{{ customer.last_name | default('') }}">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="co-email">{{ 'البريد الإلكتروني' | trans }} *</label>
+              <input class="form-input" type="email" id="co-email" name="email" required autocomplete="email" value="{{ customer.email | default('') }}">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="co-phone">{{ 'رقم الهاتف' | trans }} *</label>
+              <input class="form-input" type="tel" id="co-phone" name="phone" required autocomplete="tel" dir="ltr" value="{{ customer.phone | default('') }}">
+            </div>
+          </div>
+        </div>
+
+        {# Shipping Address #}
+        <div class="checkout-form" style="margin-bottom:var(--space-5)">
+          <h2 class="checkout-form__section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ 'عنوان الشحن' | trans }}
+          </h2>
+          <div class="form-group">
+            <label class="form-label" for="co-country">{{ 'الدولة' | trans }} *</label>
+            <select class="form-select" id="co-country" name="country" required autocomplete="country">
+              <option value="">{{ 'اختر الدولة' | trans }}</option>
+              <option value="SA" selected>{{ 'المملكة العربية السعودية' | trans }}</option>
+              <option value="AE">{{ 'الإمارات العربية المتحدة' | trans }}</option>
+              <option value="KW">{{ 'الكويت' | trans }}</option>
+              <option value="BH">{{ 'البحرين' | trans }}</option>
+              <option value="QA">{{ 'قطر' | trans }}</option>
+              <option value="OM">{{ 'عُمان' | trans }}</option>
+              <option value="EG">{{ 'مصر' | trans }}</option>
+              <option value="JO">{{ 'الأردن' | trans }}</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="co-city">{{ 'المدينة' | trans }} *</label>
+              <input class="form-input" type="text" id="co-city" name="city" required autocomplete="address-level2">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="co-district">{{ 'الحي' | trans }}</label>
+              <input class="form-input" type="text" id="co-district" name="district" autocomplete="address-level3">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="co-address">{{ 'العنوان التفصيلي' | trans }} *</label>
+            <input class="form-input" type="text" id="co-address" name="address" required autocomplete="street-address">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="co-postal">{{ 'الرمز البريدي' | trans }}</label>
+              <input class="form-input" type="text" id="co-postal" name="postal_code" autocomplete="postal-code" dir="ltr">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="co-building">{{ 'رقم المبنى / الشقة' | trans }}</label>
+              <input class="form-input" type="text" id="co-building" name="building">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="co-notes">{{ 'ملاحظات الطلب' | trans }}</label>
+            <textarea class="form-textarea" id="co-notes" name="notes" rows="3" placeholder="{{ 'أي تعليمات خاصة للتوصيل...' | trans }}"></textarea>
+          </div>
+        </div>
+
+        {# Shipping Methods #}
+        <div class="checkout-form" style="margin-bottom:var(--space-5)">
+          <h2 class="checkout-form__section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            {{ 'طريقة الشحن' | trans }}
+          </h2>
+          {% for method in shipping.methods %}
+            <label style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4);border:1.5px solid var(--color-border);border-radius:var(--radius-md);cursor:pointer;margin-bottom:var(--space-3);transition:border-color var(--transition-fast)">
+              <input type="radio" name="shipping_method" value="{{ method.id }}" {% if loop.first %}checked{% endif %} style="accent-color:var(--color-accent)">
+              <div style="flex:1">
+                <p style="font-weight:700">{{ method.name }}</p>
+                <p style="font-size:.8rem;color:var(--color-text-muted)">{{ method.estimated_days }} {{ 'أيام عمل' | trans }}</p>
+              </div>
+              <span style="font-weight:700;direction:ltr" class="num">
+                {{ method.cost.formatted == '0' ? ('مجاني' | trans) : method.cost.formatted }}
+              </span>
+            </label>
+          {% else %}
+            <p style="color:var(--color-text-muted)">{{ 'أدخل عنوانك لرؤية خيارات الشحن' | trans }}</p>
+          {% endfor %}
+        </div>
+
+        {# Payment Methods #}
+        <div class="checkout-form">
+          <h2 class="checkout-form__section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            {{ 'طريقة الدفع' | trans }}
+          </h2>
+
+          {# Salla handles payment methods natively #}
+          <salla-checkout-payment></salla-checkout-payment>
+
+          <div style="margin-top:var(--space-5)">
+            <button type="submit" class="btn btn--accent btn--full btn--lg" style="font-size:1.1rem">
+              🔒 {{ 'إتمام الطلب والدفع' | trans }}
+            </button>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:center;gap:var(--space-3);margin-top:var(--space-4);color:var(--color-text-muted);font-size:.8rem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            {{ 'دفع آمن ومشفر بتقنية SSL' | trans }}
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    {# Order Summary (Sticky) #}
+    <div class="cart-summary" style="top:calc(var(--header-height) + 16px)">
+      <h2 class="cart-summary__title">{{ 'ملخص الطلب' | trans }}</h2>
+
+      {# Items #}
+      <div style="margin-bottom:var(--space-4);max-height:300px;overflow-y:auto">
+        {% for item in cart.items %}
+          <div style="display:flex;gap:var(--space-3);padding-block:var(--space-3);border-bottom:1px solid var(--color-border-light)">
+            <div style="position:relative">
+              <img src="{{ item.product.thumbnail }}" alt="{{ item.product.name }}" style="width:56px;height:56px;object-fit:cover;border-radius:var(--radius-md)" loading="lazy">
+              <span style="position:absolute;top:-6px;inset-inline-end:-6px;background:var(--color-primary);color:#fff;font-size:.65rem;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center">{{ item.quantity }}</span>
+            </div>
+            <div style="flex:1">
+              <p style="font-size:.85rem;font-weight:600">{{ item.product.name | slice(0,40) }}{% if item.product.name | length > 40 %}…{% endif %}</p>
+            </div>
+            <span class="num" style="font-weight:700;font-size:.9rem;white-space:nowrap">{{ item.total.formatted }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="cart-summary__row">
+        <span>{{ 'المجموع الجزئي' | trans }}</span>
+        <span class="num">{{ cart.totals.subtotal.formatted }}</span>
+      </div>
+      {% if cart.totals.discount %}
+        <div class="cart-summary__row cart-summary__row--discount">
+          <span>{{ 'الخصم' | trans }}</span>
+          <span class="num">−{{ cart.totals.discount.formatted }}</span>
+        </div>
+      {% endif %}
+      <div class="cart-summary__row">
+        <span>{{ 'الشحن' | trans }}</span>
+        <span id="shipping-cost">{{ cart.totals.shipping ? cart.totals.shipping.formatted : ('يُحسب لاحقاً' | trans) }}</span>
+      </div>
+      {% if cart.totals.tax %}
+        <div class="cart-summary__row">
+          <span>{{ 'ضريبة القيمة المضافة (15%)' | trans }}</span>
+          <span class="num">{{ cart.totals.tax.formatted }}</span>
+        </div>
+      {% endif %}
+      <div class="cart-summary__row cart-summary__row--total">
+        <span>{{ 'الإجمالي' | trans }}</span>
+        <span class="num">{{ cart.totals.total.formatted }}</span>
+      </div>
+
+      {# Payment icons in summary #}
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:var(--space-4);flex-wrap:wrap">
+        <img src="{{ theme.url }}/assets/images/payment/mada.svg"      alt="مدى"       height="22" loading="lazy">
+        <img src="{{ theme.url }}/assets/images/payment/applepay.svg"  alt="Apple Pay" height="22" loading="lazy">
+        <img src="{{ theme.url }}/assets/images/payment/stcpay.svg"    alt="STC Pay"   height="22" loading="lazy">
+        <img src="{{ theme.url }}/assets/images/payment/visa.svg"      alt="Visa"      height="22" loading="lazy">
+        <img src="{{ theme.url }}/assets/images/payment/mastercard.svg" alt="Mastercard" height="22" loading="lazy">
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

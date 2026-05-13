@@ -1,0 +1,21 @@
+{
+  "pages": {
+    "index":    { "template": "pages/index",    "title": "الصفحة الرئيسية" },
+    "product":  { "template": "pages/product",  "title": "صفحة المنتج" },
+    "category": { "template": "pages/category", "title": "صفحة التصنيف" },
+    "cart":     { "template": "pages/cart",     "title": "سلة التسوق" },
+    "checkout": { "template": "pages/checkout", "title": "إتمام الشراء" },
+    "search":   { "template": "pages/search",   "title": "نتائج البحث" },
+    "about":    { "template": "pages/about",    "title": "عن المتجر" },
+    "contact":  { "template": "pages/contact",  "title": "تواصل معنا" },
+    "faq":      { "template": "pages/faq",      "title": "الأسئلة الشائعة" }
+  },
+  "layout": "layouts/master",
+  "sections": {
+    "header":            { "template": "sections/header" },
+    "footer":            { "template": "sections/footer" },
+    "announcement-bar":  { "template": "sections/announcement-bar" },
+    "newsletter":        { "template": "sections/newsletter" },
+    "cart-drawer":       { "template": "sections/cart-drawer" }
+  }
+}

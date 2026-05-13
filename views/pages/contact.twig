@@ -1,0 +1,150 @@
+{% extends 'layouts/master' %}
+{% block title %}{{ 'تواصل معنا' | trans }} — {{ store.name }}{% endblock %}
+{% block body_class %}page-contact{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-block:var(--space-9)">
+  <div class="section-header">
+    <span class="section-label">{{ 'نحن هنا' | trans }}</span>
+    <h1 class="section-title">{{ 'تواصل معنا' | trans }}</h1>
+    <p class="section-subtitle">{{ 'يسعدنا مساعدتك في أي وقت. تواصل معنا وسنرد عليك في أقرب وقت.' | trans }}</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-9);margin-top:var(--space-8);align-items:start">
+
+    {# Contact Form #}
+    <div>
+      <form id="contact-form" novalidate aria-label="{{ 'نموذج التواصل' | trans }}">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="contact-name">{{ 'الاسم الكامل' | trans }} *</label>
+            <input class="form-input" type="text" id="contact-name" name="name" required autocomplete="name" aria-required="true">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contact-email">{{ 'البريد الإلكتروني' | trans }} *</label>
+            <input class="form-input" type="email" id="contact-email" name="email" required autocomplete="email" aria-required="true">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="contact-phone">{{ 'رقم الهاتف' | trans }}</label>
+          <input class="form-input" type="tel" id="contact-phone" name="phone" autocomplete="tel" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="contact-subject">{{ 'الموضوع' | trans }} *</label>
+          <select class="form-select" id="contact-subject" name="subject" required aria-required="true">
+            <option value="">{{ 'اختر موضوعاً' | trans }}</option>
+            <option value="order">{{ 'استفسار عن طلب' | trans }}</option>
+            <option value="product">{{ 'استفسار عن منتج' | trans }}</option>
+            <option value="return">{{ 'إرجاع أو استبدال' | trans }}</option>
+            <option value="complaint">{{ 'شكوى' | trans }}</option>
+            <option value="other">{{ 'أخرى' | trans }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="contact-message">{{ 'رسالتك' | trans }} *</label>
+          <textarea class="form-textarea" id="contact-message" name="message" rows="5" required aria-required="true" placeholder="{{ 'اكتب رسالتك هنا...' | trans }}"></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary btn--lg" id="contact-submit">
+          {{ 'إرسال الرسالة' | trans }}
+        </button>
+        <p id="contact-status" role="alert" aria-live="polite" style="margin-top:12px;font-size:.875rem"></p>
+      </form>
+    </div>
+
+    {# Contact Info + Map #}
+    <div>
+      <div style="background:var(--color-secondary);border-radius:var(--radius-xl);padding:var(--space-7);margin-bottom:var(--space-6)">
+        <h2 style="font-size:1.25rem;font-weight:800;margin-bottom:var(--space-5)">{{ 'معلومات التواصل' | trans }}</h2>
+
+        <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+          {% if store.phone %}
+            <a href="tel:{{ store.phone }}" style="display:flex;align-items:center;gap:var(--space-3);color:var(--color-text)">
+              <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--color-accent);display:flex;align-items:center;justify-content:center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" width="20" height="20" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.59 1.23h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+              <div>
+                <p style="font-size:.8rem;color:var(--color-text-muted)">{{ 'الهاتف' | trans }}</p>
+                <p style="font-weight:700" dir="ltr">{{ store.phone }}</p>
+              </div>
+            </a>
+          {% endif %}
+
+          {% if store.email %}
+            <a href="mailto:{{ store.email }}" style="display:flex;align-items:center;gap:var(--space-3);color:var(--color-text)">
+              <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--color-primary);display:flex;align-items:center;justify-content:center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" width="20" height="20" aria-hidden="true">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </div>
+              <div>
+                <p style="font-size:.8rem;color:var(--color-text-muted)">{{ 'البريد الإلكتروني' | trans }}</p>
+                <p style="font-weight:700">{{ store.email }}</p>
+              </div>
+            </a>
+          {% endif %}
+
+          {% if settings.whatsapp_number %}
+            <a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:var(--space-3);color:var(--color-text)">
+              <div style="width:44px;height:44px;border-radius:var(--radius-md);background:#25D366;display:flex;align-items:center;justify-content:center">
+                <svg viewBox="0 0 24 24" fill="white" width="20" height="20" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12c0 2.099.543 4.07 1.49 5.784L0 24l6.41-1.461A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.856 0-3.59-.503-5.076-1.38l-.36-.213-3.805.868.94-3.698-.237-.382A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                </svg>
+              </div>
+              <div>
+                <p style="font-size:.8rem;color:var(--color-text-muted)">{{ 'واتساب' | trans }}</p>
+                <p style="font-weight:700" dir="ltr">+{{ settings.whatsapp_number }}</p>
+              </div>
+            </a>
+          {% endif %}
+        </div>
+
+        <div style="margin-top:var(--space-5);padding-top:var(--space-5);border-top:1px solid var(--color-border)">
+          <p style="font-size:.875rem;font-weight:700;margin-bottom:var(--space-2)">{{ 'ساعات العمل' | trans }}</p>
+          <p style="font-size:.875rem;color:var(--color-text-muted)">{{ 'الأحد — الخميس: 9 صباحاً — 6 مساءً' | trans }}</p>
+          <p style="font-size:.875rem;color:var(--color-text-muted)">{{ 'الجمعة — السبت: 10 صباحاً — 4 مساءً' | trans }}</p>
+        </div>
+      </div>
+
+      {# Map Placeholder #}
+      {% if store.address %}
+        <div style="border-radius:var(--radius-xl);overflow:hidden;height:250px;background:var(--color-bg-alt);display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border)">
+          <p style="color:var(--color-text-muted);text-align:center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="margin:0 auto 8px;color:var(--color-accent)" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ store.address }}
+          </p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('contact-form')?.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('contact-submit');
+  const status = document.getElementById('contact-status');
+  btn.textContent = '{{ 'جاري الإرسال...' | trans }}';
+  btn.disabled = true;
+  try {
+    const data = Object.fromEntries(new FormData(this));
+    await Salla.contact.send(data);
+    status.style.color = 'var(--color-success)';
+    status.textContent = '✓ {{ 'تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.' | trans }}';
+    this.reset();
+  } catch(err) {
+    status.style.color = 'var(--color-error)';
+    status.textContent = '{{ 'حدث خطأ، يرجى المحاولة مجدداً.' | trans }}';
+  } finally {
+    btn.textContent = '{{ 'إرسال الرسالة' | trans }}';
+    btn.disabled = false;
+  }
+});
+</script>
+{% endblock %}

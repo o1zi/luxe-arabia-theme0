@@ -1,0 +1,301 @@
+{% extends 'layouts/master' %}
+
+{% block title %}{{ category.name }} — {{ store.name }}{% endblock %}
+{% block description %}{{ category.description | default(category.name ~ ' — ' ~ store.name) }}{% endblock %}
+
+{% block body_class %}page-category{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  {# Breadcrumb #}
+  <nav class="breadcrumb" aria-label="{{ 'مسار التنقل' | trans }}">
+    <div class="breadcrumb__item">
+      <a href="{{ store.url }}">{{ 'الرئيسية' | trans }}</a>
+      <span class="breadcrumb__sep" aria-hidden="true">›</span>
+    </div>
+    {% if category.parent %}
+      <div class="breadcrumb__item">
+        <a href="{{ category.parent.url }}">{{ category.parent.name }}</a>
+        <span class="breadcrumb__sep" aria-hidden="true">›</span>
+      </div>
+    {% endif %}
+    <div class="breadcrumb__item" aria-current="page">{{ category.name }}</div>
+  </nav>
+
+  {# Category Hero #}
+  {% if category.image %}
+    <div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;margin-bottom:var(--space-7);height:200px">
+      <img src="{{ category.image }}" alt="{{ category.name }}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;padding:var(--space-8)">
+        <h1 style="color:#fff;font-size:clamp(1.5rem,4vw,2.5rem);font-weight:900">{{ category.name }}</h1>
+      </div>
+    </div>
+  {% else %}
+    <div style="margin-bottom:var(--space-5)">
+      <h1 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:900;color:var(--color-primary)">{{ category.name }}</h1>
+      {% if category.description %}
+        <p style="color:var(--color-text-muted);margin-top:var(--space-2)">{{ category.description }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {# Layout: Sidebar + Products #}
+  <div class="category-layout" x-data="{ filterOpen: false, viewMode: 'grid' }">
+
+    {# ═══ Sidebar Filter ═══ #}
+    <aside
+      class="filter-sidebar"
+      id="filter-sidebar"
+      :class="{ 'open': filterOpen }"
+      aria-label="{{ 'فلترة المنتجات' | trans }}"
+    >
+      <div class="filter-sidebar__header">
+        <span>{{ 'فلترة المنتجات' | trans }}</span>
+        <button class="filter-sidebar__clear" type="button" id="clear-filters">
+          {{ 'مسح الكل' | trans }}
+        </button>
+      </div>
+
+      <form id="filter-form" method="get">
+
+        {# Price Range Filter #}
+        <div class="filter-group">
+          <button
+            class="filter-group__toggle"
+            type="button"
+            aria-expanded="true"
+            aria-controls="filter-price"
+          >
+            {{ 'نطاق السعر' | trans }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          <div class="filter-group__body open" id="filter-price">
+            <div class="range-slider">
+              <input
+                type="range"
+                name="min_price"
+                id="min-price-range"
+                min="0"
+                max="{{ filters.max_price | default(1000) }}"
+                value="{{ request.min_price | default(0) }}"
+                aria-label="{{ 'الحد الأدنى للسعر' | trans }}"
+              >
+              <input
+                type="range"
+                name="max_price"
+                id="max-price-range"
+                min="0"
+                max="{{ filters.max_price | default(1000) }}"
+                value="{{ request.max_price | default(filters.max_price | default(1000)) }}"
+                style="margin-top:8px"
+                aria-label="{{ 'الحد الأقصى للسعر' | trans }}"
+              >
+              <div class="range-slider__values">
+                <span id="min-price-val">{{ request.min_price | default(0) }}</span>
+                <span>—</span>
+                <span id="max-price-val">{{ request.max_price | default(filters.max_price | default(1000)) }}</span>
+                <span>{{ store.currency.symbol }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Brands Filter #}
+        {% if filters.brands | length > 0 %}
+          <div class="filter-group">
+            <button class="filter-group__toggle" type="button" aria-expanded="false" aria-controls="filter-brand">
+              {{ 'العلامة التجارية' | trans }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filter-group__body" id="filter-brand">
+              {% for brand in filters.brands %}
+                <label class="filter-group__option">
+                  <input type="checkbox" name="brands[]" value="{{ brand.id }}" {% if brand.id in request.brands %}checked{% endif %}>
+                  {{ brand.name }}
+                  <span class="count">({{ brand.count }})</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {# Rating Filter #}
+        <div class="filter-group">
+          <button class="filter-group__toggle" type="button" aria-expanded="false" aria-controls="filter-rating">
+            {{ 'التقييم' | trans }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-group__body" id="filter-rating">
+            {% for stars in [5, 4, 3, 2, 1] %}
+              <label class="filter-group__option">
+                <input type="radio" name="min_rating" value="{{ stars }}" {% if request.min_rating == stars %}checked{% endif %}>
+                {% for i in 1..stars %}<span style="color:var(--color-accent)">★</span>{% endfor %}{% for i in stars+1..5 %}<span style="color:var(--color-border)">★</span>{% endfor %}
+                {{ 'فأعلى' | trans }}
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# Apply Button #}
+        <div style="padding:var(--space-4) var(--space-5)">
+          <button type="submit" class="btn btn--primary btn--full">{{ 'تطبيق الفلتر' | trans }}</button>
+        </div>
+
+      </form>
+    </aside>
+
+    {# ═══ Products Area ═══ #}
+    <div>
+
+      {# Toolbar #}
+      <div class="category-toolbar" role="toolbar" aria-label="{{ 'خيارات العرض' | trans }}">
+
+        <div class="category-toolbar__controls">
+          {# Mobile filter toggle #}
+          <button
+            class="category-toolbar__filter-btn"
+            @click="filterOpen = true"
+            aria-controls="filter-sidebar"
+            :aria-expanded="filterOpen.toString()"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <line x1="4" y1="6" x2="20" y2="6" stroke-linecap="round"/>
+              <line x1="8" y1="12" x2="20" y2="12" stroke-linecap="round"/>
+              <line x1="12" y1="18" x2="20" y2="18" stroke-linecap="round"/>
+            </svg>
+            {{ 'فلترة' | trans }}
+          </button>
+        </div>
+
+        <span class="category-toolbar__results" aria-live="polite">
+          {{ products.total }} {{ 'منتج' | trans }}
+        </span>
+
+        <div class="category-toolbar__controls">
+          {# Sort #}
+          <select
+            class="category-toolbar__sort"
+            name="sort"
+            id="sort-select"
+            aria-label="{{ 'ترتيب المنتجات' | trans }}"
+            onchange="window.location.href=this.value"
+          >
+            <option value="?sort=newest"  {% if request.sort == 'newest'  %}selected{% endif %}>{{ 'الأحدث' | trans }}</option>
+            <option value="?sort=top"     {% if request.sort == 'top'     %}selected{% endif %}>{{ 'الأكثر مبيعاً' | trans }}</option>
+            <option value="?sort=rating"  {% if request.sort == 'rating'  %}selected{% endif %}>{{ 'الأعلى تقييماً' | trans }}</option>
+            <option value="?sort=price"   {% if request.sort == 'price'   %}selected{% endif %}>{{ 'السعر: من الأقل' | trans }}</option>
+            <option value="?sort=-price"  {% if request.sort == '-price'  %}selected{% endif %}>{{ 'السعر: من الأعلى' | trans }}</option>
+          </select>
+
+          {# View Mode #}
+          <div class="category-toolbar__view-toggle" aria-label="{{ 'طريقة العرض' | trans }}">
+            <button
+              @click="viewMode = 'grid'"
+              :class="{ 'active': viewMode === 'grid' }"
+              aria-label="{{ 'عرض شبكة' | trans }}"
+              :aria-pressed="(viewMode === 'grid').toString()"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+            <button
+              @click="viewMode = 'list'"
+              :class="{ 'active': viewMode === 'list' }"
+              aria-label="{{ 'عرض قائمة' | trans }}"
+              :aria-pressed="(viewMode === 'list').toString()"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <line x1="3" y1="6" x2="21" y2="6" stroke-linecap="round"/>
+                <line x1="3" y1="12" x2="21" y2="12" stroke-linecap="round"/>
+                <line x1="3" y1="18" x2="21" y2="18" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {# Products Grid/List #}
+      <div :class="viewMode === 'grid' ? 'products-grid cols-{{ settings.product_columns_desktop | default(3) }}' : 'products-list'">
+        {% if products.items | length > 0 %}
+          {% for product in products.items %}
+            {% include 'components/product-card' %}
+          {% endfor %}
+        {% else %}
+          <div style="grid-column:1/-1;text-align:center;padding:var(--space-10);color:var(--color-text-muted)">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin:0 auto 16px;opacity:.3" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/>
+            </svg>
+            <p style="font-size:1.25rem;font-weight:700;color:var(--color-text);margin-bottom:8px">{{ 'لا توجد منتجات' | trans }}</p>
+            <p>{{ 'جرب تغيير الفلاتر أو ابحث عن منتج آخر' | trans }}</p>
+          </div>
+        {% endif %}
+      </div>
+
+      {# Pagination #}
+      {% if products.total_pages > 1 %}
+        <nav class="pagination" aria-label="{{ 'ترقيم الصفحات' | trans }}">
+          {% if products.current_page > 1 %}
+            <a class="pagination__btn" href="?page={{ products.current_page - 1 }}&{{ request | query_string }}" aria-label="{{ 'الصفحة السابقة' | trans }}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke-linecap="round"/></svg>
+            </a>
+          {% endif %}
+
+          {% for page in 1..products.total_pages %}
+            {% if page == products.current_page %}
+              <span class="pagination__btn active" aria-current="page">{{ page }}</span>
+            {% elseif page == 1 or page == products.total_pages or (page >= products.current_page - 2 and page <= products.current_page + 2) %}
+              <a class="pagination__btn" href="?page={{ page }}&{{ request | query_string }}">{{ page }}</a>
+            {% elseif page == products.current_page - 3 or page == products.current_page + 3 %}
+              <span class="pagination__btn" style="pointer-events:none">…</span>
+            {% endif %}
+          {% endfor %}
+
+          {% if products.current_page < products.total_pages %}
+            <a class="pagination__btn" href="?page={{ products.current_page + 1 }}&{{ request | query_string }}" aria-label="{{ 'الصفحة التالية' | trans }}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round"/></svg>
+            </a>
+          {% endif %}
+        </nav>
+      {% endif %}
+
+    </div>{# /.products-area #}
+  </div>{# /.category-layout #}
+</div>{# /.container #}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Filter accordion
+document.querySelectorAll('.filter-group__toggle').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const expanded = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', !expanded);
+    document.getElementById(this.getAttribute('aria-controls'))?.classList.toggle('open', !expanded);
+  });
+});
+
+// Close filter sidebar on mobile
+document.getElementById('nav-overlay')?.addEventListener('click', function() {
+  document.getElementById('filter-sidebar')?.classList.remove('open');
+});
+
+// Price range labels
+const minRange = document.getElementById('min-price-range');
+const maxRange = document.getElementById('max-price-range');
+const minVal   = document.getElementById('min-price-val');
+const maxVal   = document.getElementById('max-price-val');
+
+minRange?.addEventListener('input', function() { minVal.textContent = this.value; });
+maxRange?.addEventListener('input', function() { maxVal.textContent = this.value; });
+
+// Clear filters
+document.getElementById('clear-filters')?.addEventListener('click', function() {
+  window.location.href = window.location.pathname;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,177 @@
+{#
+  Product Card Component — كارد المنتج
+  Variables:
+    product  — كائن المنتج
+    show_quick_add (optional, default true)
+#}
+{% set show_quick_add = show_quick_add ?? true %}
+{% set ratio = settings.product_image_ratio | default('square') %}
+
+<article
+  class="product-card{% if product.is_out_of_stock %} out-of-stock{% endif %}"
+  aria-label="{{ product.name }}"
+  itemscope
+  itemtype="https://schema.org/Product"
+>
+  {# Image #}
+  <div class="product-card__image-wrap ratio-{{ ratio }}">
+    <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+      <img
+        class="product-card__img product-card__img--main"
+        src="{{ product.thumbnail | default(theme.url ~ '/assets/images/placeholder.jpg') }}"
+        alt="{{ product.name }}"
+        loading="lazy"
+        decoding="async"
+        width="400"
+        height="400"
+        itemprop="image"
+      >
+      {% if product.images[1] is defined %}
+        <img
+          class="product-card__img product-card__img--hover"
+          src="{{ product.images[1].url }}"
+          alt="{{ product.name }}"
+          loading="lazy"
+          decoding="async"
+          width="400"
+          height="400"
+          aria-hidden="true"
+        >
+      {% endif %}
+    </a>
+
+    {# Badges #}
+    {% if settings.show_badges %}
+      <div class="product-card__badges" aria-label="{{ 'شارات المنتج' | trans }}">
+        {% if product.is_new %}
+          <span class="badge badge--new">{{ 'جديد' | trans }}</span>
+        {% endif %}
+        {% if product.is_out_of_stock %}
+          <span class="badge badge--out">{{ 'نفد' | trans }}</span>
+        {% elseif product.sale_price %}
+          <span class="badge badge--sale">
+            -{{ product.discount_percent }}%
+          </span>
+        {% endif %}
+        {% if product.is_featured %}
+          <span class="badge badge--featured">{{ 'مميز' | trans }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {# Quick Actions #}
+    <div class="product-card__actions" aria-label="{{ 'إجراءات سريعة' | trans }}">
+      {# Wishlist #}
+      <button
+        class="product-card__action-btn{% if product.in_wishlist %} active{% endif %}"
+        data-wishlist-toggle="{{ product.id }}"
+        data-wishlist-id="{{ product.id }}"
+        aria-label="{% if product.in_wishlist %}{{ 'إزالة من المفضلة' | trans }}{% else %}{{ 'إضافة للمفضلة' | trans }}{% endif %}"
+        aria-pressed="{{ product.in_wishlist ? 'true' : 'false' }}"
+      >
+        <svg viewBox="0 0 24 24" fill="{% if product.in_wishlist %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      {# Compare #}
+      <button
+        class="product-card__action-btn"
+        data-compare="{{ product.id }}"
+        aria-label="{{ 'مقارنة' | trans }}"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      {# Quick View #}
+      <button
+        class="product-card__action-btn"
+        data-quick-view="{{ product.id }}"
+        aria-label="{{ 'معاينة سريعة' | trans }}"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    {# Quick Add (on image hover) #}
+    {% if show_quick_add and not product.is_out_of_stock %}
+      <div class="product-card__quick-add">
+        <button
+          data-quick-add="{{ product.id }}"
+          aria-label="{{ 'إضافة سريعة' | trans }} {{ product.name }}"
+        >
+          {{ 'إضافة سريعة' | trans }}
+        </button>
+      </div>
+    {% endif %}
+  </div>
+
+  {# Info #}
+  <div class="product-card__info">
+    {% if product.brand %}
+      <p class="product-card__brand" itemprop="brand">{{ product.brand.name }}</p>
+    {% endif %}
+
+    <h3 class="product-card__name" itemprop="name">
+      <a href="{{ product.url }}">{{ product.name }}</a>
+    </h3>
+
+    {% if settings.show_product_rating and product.rating.count > 0 %}
+      <div class="product-card__rating rating" aria-label="{{ product.rating.avg }} {{ 'نجوم من 5' | trans }}">
+        {% for i in 1..5 %}
+          <svg viewBox="0 0 24 24" fill="{{ i <= product.rating.avg ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        {% endfor %}
+        <span class="rating__count">({{ product.rating.count }})</span>
+      </div>
+    {% endif %}
+
+    <div class="product-card__price-row">
+      {% if settings.show_old_price and product.sale_price %}
+        <span class="price price--old num" aria-label="{{ 'السعر قبل الخصم' | trans }}">
+          {{ product.regular_price.formatted }}
+        </span>
+      {% endif %}
+      <span
+        class="price price--current{% if product.sale_price %} price--sale{% endif %} num"
+        itemprop="price"
+        content="{{ product.price.amount }}"
+        aria-label="{{ 'السعر' | trans }}"
+      >
+        {{ product.price.formatted }}
+      </span>
+      <meta itemprop="priceCurrency" content="{{ store.currency.code }}">
+    </div>
+
+    {# Tabby / Tamara installment badge #}
+    {% if settings.show_tabby and product.price.amount >= 200 %}
+      <div class="installment-badge">
+        <img src="{{ theme.url }}/assets/images/payment/tabby.svg" alt="Tabby" height="16">
+        {{ 'أو 4 دفعات' | trans }} {{ (product.price.amount / 4) | number_format(2) }} {{ store.currency.symbol }}
+      </div>
+    {% endif %}
+
+    {% if not product.is_out_of_stock %}
+      <button
+        class="product-card__add-btn"
+        data-add-to-cart="{{ product.id }}"
+        aria-label="{{ 'أضف إلى السلة' | trans }} {{ product.name }}"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        {{ 'أضف للسلة' | trans }}
+      </button>
+    {% else %}
+      <button class="product-card__add-btn" disabled aria-disabled="true">
+        {{ 'نفد المخزون' | trans }}
+      </button>
+    {% endif %}
+  </div>
+</article>

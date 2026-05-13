@@ -1,0 +1,32 @@
+{% extends 'layouts/master' %}
+{% block title %}{{ 'نتائج البحث عن:' | trans }} "{{ request.q }}" — {{ store.name }}{% endblock %}
+{% block robots %}noindex, follow{% endblock %}
+{% block body_class %}page-search{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-block:var(--space-8)">
+  <h1 style="font-size:clamp(1.25rem,3vw,1.75rem);font-weight:900;margin-bottom:var(--space-3)">
+    {{ 'نتائج البحث عن:' | trans }} <span style="color:var(--color-accent)">"{{ request.q }}"</span>
+  </h1>
+  <p style="color:var(--color-text-muted);margin-bottom:var(--space-7)">
+    {{ products.total }} {{ 'نتيجة' | trans }}
+  </p>
+
+  {% if products.items | length > 0 %}
+    <div class="products-grid">
+      {% for product in products.items %}
+        {% include 'components/product-card' %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align:center;padding:var(--space-9)">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin:0 auto 16px;opacity:.3" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/>
+      </svg>
+      <h2 style="margin-bottom:8px">{{ 'لا توجد نتائج' | trans }}</h2>
+      <p style="color:var(--color-text-muted)">{{ 'جرب كلمات مختلفة أو تصفح التصنيفات' | trans }}</p>
+      <a href="{{ store.urls.products }}" class="btn btn--primary" style="margin-top:24px">{{ 'تسوق جميع المنتجات' | trans }}</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

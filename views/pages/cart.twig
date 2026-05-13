@@ -1,0 +1,160 @@
+{% extends 'layouts/master' %}
+{% block title %}{{ 'سلة التسوق' | trans }} — {{ store.name }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block body_class %}page-cart{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:900;color:var(--color-primary);margin-block:var(--space-6)">
+    {{ 'سلة التسوق' | trans }}
+    <span style="font-size:1rem;font-weight:400;color:var(--color-text-muted)">({{ cart.count }} {{ 'منتج' | trans }})</span>
+  </h1>
+
+  {% if cart.items | length > 0 %}
+    <div class="cart-layout">
+
+      {# Items Table #}
+      <div>
+        <div class="cart-table">
+          <div class="cart-table__head" aria-hidden="true">
+            <span></span>
+            <span>{{ 'المنتج' | trans }}</span>
+            <span>{{ 'السعر' | trans }}</span>
+            <span>{{ 'الكمية' | trans }}</span>
+            <span>{{ 'المجموع' | trans }}</span>
+            <span></span>
+          </div>
+
+          {% for item in cart.items %}
+            <div class="cart-table__row" data-item-id="{{ item.id }}">
+              <img
+                class="cart-table__image"
+                src="{{ item.product.thumbnail | default(theme.url ~ '/assets/images/placeholder.jpg') }}"
+                alt="{{ item.product.name }}"
+                loading="lazy"
+              >
+              <div>
+                <p class="cart-table__name"><a href="{{ item.product.url }}">{{ item.product.name }}</a></p>
+                {% if item.options %}
+                  <p class="cart-table__variant">
+                    {% for opt in item.options %}{{ opt.name }}: {{ opt.value }}{% if not loop.last %} · {% endif %}{% endfor %}
+                  </p>
+                {% endif %}
+              </div>
+              <span class="num">{{ item.price.formatted }}</span>
+              <div class="quantity-input">
+                <button type="button" data-qty-minus="{{ item.id }}" aria-label="{{ 'تقليل' | trans }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/></svg>
+                </button>
+                <input type="number" value="{{ item.quantity }}" min="1" data-item="{{ item.id }}" aria-label="{{ 'الكمية' | trans }}">
+                <button type="button" data-qty-plus="{{ item.id }}" aria-label="{{ 'زيادة' | trans }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <span class="num" style="font-weight:700">{{ item.total.formatted }}</span>
+              <button class="cart-table__remove" data-remove-item="{{ item.id }}" aria-label="{{ 'حذف' | trans }} {{ item.product.name }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4h6v2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+
+        {# Suggested Products #}
+        {% set suggested = products({ limit: 4, type: 'top' }) %}
+        {% if suggested | length > 0 %}
+          <div style="margin-top:var(--space-8)">
+            <h2 style="font-size:1.25rem;font-weight:800;margin-bottom:var(--space-5)">{{ 'قد يعجبك أيضاً' | trans }}</h2>
+            <div class="products-grid cols-4">
+              {% for product in suggested %}
+                {% include 'components/product-card' %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      {# Cart Summary #}
+      <div class="cart-summary">
+        <h2 class="cart-summary__title">{{ 'ملخص الطلب' | trans }}</h2>
+
+        <div class="cart-summary__row">
+          <span>{{ 'المجموع الجزئي' | trans }}</span>
+          <span class="num">{{ cart.totals.subtotal.formatted }}</span>
+        </div>
+
+        {% if cart.totals.shipping %}
+          <div class="cart-summary__row">
+            <span>{{ 'الشحن' | trans }}</span>
+            <span class="num">{{ cart.totals.shipping.formatted }}</span>
+          </div>
+        {% else %}
+          <div class="cart-summary__row" style="color:var(--color-success)">
+            <span>{{ 'الشحن' | trans }}</span>
+            <span>{{ 'مجاني' | trans }}</span>
+          </div>
+        {% endif %}
+
+        {% if cart.totals.tax %}
+          <div class="cart-summary__row">
+            <span>{{ 'الضريبة (15%)' | trans }}</span>
+            <span class="num">{{ cart.totals.tax.formatted }}</span>
+          </div>
+        {% endif %}
+
+        {% if cart.totals.discount %}
+          <div class="cart-summary__row cart-summary__row--discount">
+            <span>{{ 'الخصم' | trans }}</span>
+            <span class="num">−{{ cart.totals.discount.formatted }}</span>
+          </div>
+        {% endif %}
+
+        <div class="cart-summary__row cart-summary__row--total">
+          <span>{{ 'الإجمالي' | trans }}</span>
+          <span class="num">{{ cart.totals.total.formatted }}</span>
+        </div>
+
+        {# Coupon #}
+        <div class="cart-summary__coupon">
+          <p style="font-size:.875rem;font-weight:700;margin-bottom:8px">{{ 'كوبون الخصم' | trans }}</p>
+          <div class="coupon-input">
+            <input type="text" id="coupon-code" placeholder="{{ 'أدخل الكود' | trans }}" aria-label="{{ 'كوبون الخصم' | trans }}">
+            <button type="button" id="apply-coupon">{{ 'تطبيق' | trans }}</button>
+          </div>
+          <p id="coupon-msg" role="alert" aria-live="polite" style="font-size:.8rem;margin-top:6px"></p>
+        </div>
+
+        <div class="cart-summary__checkout-btn">
+          <a href="{{ store.urls.checkout }}" class="btn btn--accent btn--full btn--lg">
+            {{ 'إتمام الشراء' | trans }}
+          </a>
+          <a href="{{ store.urls.products }}" style="display:block;text-align:center;margin-top:12px;font-size:.875rem;color:var(--color-text-muted)">
+            ← {{ 'مواصلة التسوق' | trans }}
+          </a>
+        </div>
+
+        {# Payment icons #}
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap" aria-label="{{ 'وسائل الدفع' | trans }}">
+          <img src="{{ theme.url }}/assets/images/payment/mada.svg"      alt="مدى"       height="24" loading="lazy">
+          <img src="{{ theme.url }}/assets/images/payment/stcpay.svg"    alt="STC Pay"   height="24" loading="lazy">
+          <img src="{{ theme.url }}/assets/images/payment/applepay.svg"  alt="Apple Pay" height="24" loading="lazy">
+          <img src="{{ theme.url }}/assets/images/payment/visa.svg"      alt="Visa"      height="24" loading="lazy">
+          <img src="{{ theme.url }}/assets/images/payment/mastercard.svg" alt="Mastercard" height="24" loading="lazy">
+        </div>
+      </div>
+
+    </div>
+  {% else %}
+    {# Empty Cart #}
+    <div style="text-align:center;padding:var(--space-10);max-width:400px;margin:0 auto">
+      <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin:0 auto 24px;color:var(--color-border)" aria-hidden="true">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
+      <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:var(--space-3)">{{ 'سلتك فارغة' | trans }}</h2>
+      <p style="color:var(--color-text-muted);margin-bottom:var(--space-6)">{{ 'لم تضف أي منتجات بعد. ابدأ التسوق الآن!' | trans }}</p>
+      <a href="{{ store.urls.products }}" class="btn btn--primary btn--lg">{{ 'تسوق الآن' | trans }}</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

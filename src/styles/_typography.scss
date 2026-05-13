@@ -1,0 +1,110 @@
+// ═══════════════════════════════════════════
+// Typography
+// ═══════════════════════════════════════════
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: var(--line-height-heading);
+  color: var(--color-primary);
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
+h4 { font-size: 1.125rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: 0.875rem; }
+
+p {
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+
+  + p {
+    margin-top: var(--space-4);
+  }
+}
+
+// Price display
+.price {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-primary);
+
+  &--current {
+    font-size: 1.25rem;
+    color: var(--color-primary);
+  }
+
+  &--old {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+    margin-inline-end: var(--space-2);
+  }
+
+  &--sale {
+    color: var(--color-error);
+  }
+
+  &--currency {
+    font-size: 0.8em;
+    font-weight: 600;
+  }
+}
+
+// Badges
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+
+  &--new {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  &--sale {
+    background: var(--color-error);
+    color: #fff;
+  }
+
+  &--out {
+    background: var(--color-border);
+    color: var(--color-text-muted);
+  }
+
+  &--bestseller {
+    background: var(--color-accent);
+    color: var(--color-primary);
+  }
+
+  &--featured {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+    color: var(--color-primary);
+  }
+}
+
+// Star ratings
+.rating {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--color-accent);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &__count {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-inline-start: var(--space-1);
+  }
+}

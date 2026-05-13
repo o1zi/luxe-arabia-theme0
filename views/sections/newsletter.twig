@@ -1,0 +1,65 @@
+{# Newsletter Section — النشرة البريدية #}
+<section class="newsletter" aria-labelledby="newsletter-title">
+  <div class="container">
+    <h2 class="newsletter__title" id="newsletter-title">
+      {{ 'اشترك في نشرتنا البريدية' | trans }}
+    </h2>
+    <p class="newsletter__subtitle">
+      {{ 'احصل على أحدث العروض والمنتجات الجديدة مباشرة في بريدك الإلكتروني' | trans }}
+    </p>
+
+    <form
+      class="newsletter__form"
+      id="newsletter-form"
+      data-salla-newsletter
+      novalidate
+      aria-label="{{ 'نموذج الاشتراك في النشرة البريدية' | trans }}"
+    >
+      <input
+        class="newsletter__input"
+        type="email"
+        name="email"
+        id="newsletter-email"
+        placeholder="{{ 'بريدك الإلكتروني' | trans }}"
+        required
+        autocomplete="email"
+        aria-label="{{ 'البريد الإلكتروني' | trans }}"
+        aria-describedby="newsletter-error"
+      >
+      <button
+        type="submit"
+        class="newsletter__btn"
+        aria-label="{{ 'اشتراك' | trans }}"
+      >
+        {{ 'اشتراك' | trans }}
+      </button>
+    </form>
+
+    <p id="newsletter-error" role="alert" aria-live="polite" style="color:#fff;margin-top:8px;font-size:.85rem;display:none"></p>
+
+    <p style="color:rgba(255,255,255,0.5);font-size:.8rem;margin-top:12px">
+      🔒 {{ 'لن نشارك بريدك مع أي طرف ثالث. يمكنك إلغاء الاشتراك في أي وقت.' | trans }}
+    </p>
+  </div>
+</section>
+
+<script>
+document.getElementById('newsletter-form')?.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const email = this.querySelector('input[type="email"]').value;
+  const errEl = document.getElementById('newsletter-error');
+  const btn   = this.querySelector('button[type="submit"]');
+  btn.textContent = '{{ 'جاري الاشتراك...' | trans }}';
+  btn.disabled = true;
+  try {
+    await Salla.newsletter.subscribe({ email });
+    btn.textContent = '{{ 'تم الاشتراك! ✓' | trans }}';
+    errEl.style.display = 'none';
+  } catch (err) {
+    errEl.textContent = '{{ 'حدث خطأ، يرجى المحاولة مجدداً.' | trans }}';
+    errEl.style.display = 'block';
+    btn.textContent = '{{ 'اشتراك' | trans }}';
+    btn.disabled = false;
+  }
+});
+</script>
