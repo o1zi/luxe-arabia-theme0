@@ -4,8 +4,9 @@
   "description": "Salla Theme - Luxe Arabia",
   "license": "MIT",
   "scripts": {
-    "dev": "salla theme serve",
-    "build": "echo build"
+    "watch": "sass src/styles/main.scss public/app.css --style=compressed --no-source-map --watch",
+    "development": "sass src/styles/main.scss public/app.css --style=compressed --no-source-map",
+    "production": "sass src/styles/main.scss public/app.css --style=compressed --no-source-map"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
