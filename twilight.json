@@ -1,13 +1,246 @@
 {
-  "name": "Luxe Arabia",
-  "version": "1.0.0",
-  "description": "ثيم فاخر ومتكامل للمتاجر الإلكترونية العربية",
-  "author": "Luxe Arabia Theme",
-  "engine": "twilight",
-  "tags": ["fashion", "luxury", "rtl", "arabic", "modern"],
-  "screenshots": {
-    "desktop": "screenshots/desktop.jpg",
-    "mobile": "screenshots/mobile.jpg"
-  },
-  "settings": "config/settings.json"
+    "name": {
+        "ar": "لوكس عربيا",
+        "en": "Luxe Arabia"
+    },
+    "repository": "https://github.com/o1zi/luxe-arabia-theme",
+    "author_email": "",
+    "features": [
+        "mega-menu",
+        "fonts",
+        "color",
+        "breadcrumb",
+        "filters"
+    ],
+    "settings": [
+        {
+            "id": "color_primary",
+            "type": "color",
+            "label": "اللون الأساسي",
+            "default": "#1A1A2E"
+        },
+        {
+            "id": "color_secondary",
+            "type": "color",
+            "label": "اللون الثانوي",
+            "default": "#F5F0E8"
+        },
+        {
+            "id": "color_accent",
+            "type": "color",
+            "label": "لون التمييز",
+            "default": "#C9A84C"
+        },
+        {
+            "id": "color_background",
+            "type": "color",
+            "label": "لون الخلفية",
+            "default": "#FFFFFF"
+        },
+        {
+            "id": "color_text_primary",
+            "type": "color",
+            "label": "لون النص الأساسي",
+            "default": "#1A1A1A"
+        },
+        {
+            "id": "color_text_secondary",
+            "type": "color",
+            "label": "لون النص الثانوي",
+            "default": "#6B6B6B"
+        },
+        {
+            "id": "font_heading",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": "خط العناوين",
+            "selected": [
+                {
+                    "label": "تجوال",
+                    "value": "Tajawal",
+                    "key": "font-tajawal"
+                }
+            ],
+            "options": [
+                { "label": "تجوال",     "value": "Tajawal",           "key": "font-tajawal" },
+                { "label": "المراعي",   "value": "Almarai",           "key": "font-almarai" },
+                { "label": "القاهرة",   "value": "Cairo",             "key": "font-cairo" },
+                { "label": "نوتو كوفي", "value": "Noto Kufi Arabic",  "key": "font-noto" },
+                { "label": "ريدكس برو", "value": "Readex Pro",        "key": "font-readex" }
+            ],
+            "source": "Manual",
+            "required": true
+        },
+        {
+            "id": "announcement_bar_enabled",
+            "type": "boolean",
+            "label": "إظهار شريط الإشعارات",
+            "default": true
+        },
+        {
+            "id": "announcement_bar_text",
+            "type": "text",
+            "label": "نص شريط الإشعارات",
+            "default": "🎉 شحن مجاني على الطلبات فوق 200 ريال"
+        },
+        {
+            "id": "header_sticky",
+            "type": "boolean",
+            "label": "هيدر ثابت عند التمرير",
+            "default": true
+        },
+        {
+            "id": "show_hero",
+            "type": "boolean",
+            "label": "إظهار السلايدر الرئيسي",
+            "default": true
+        },
+        {
+            "id": "show_features_bar",
+            "type": "boolean",
+            "label": "إظهار شريط المميزات",
+            "default": true
+        },
+        {
+            "id": "show_new_products",
+            "type": "boolean",
+            "label": "إظهار أحدث المنتجات",
+            "default": true
+        },
+        {
+            "id": "show_bestsellers",
+            "type": "boolean",
+            "label": "إظهار الأكثر مبيعاً",
+            "default": true
+        },
+        {
+            "id": "show_daily_deals",
+            "type": "boolean",
+            "label": "إظهار عروض اليوم",
+            "default": true
+        },
+        {
+            "id": "show_categories",
+            "type": "boolean",
+            "label": "إظهار التصنيفات",
+            "default": true
+        },
+        {
+            "id": "show_testimonials",
+            "type": "boolean",
+            "label": "إظهار شهادات العملاء",
+            "default": true
+        },
+        {
+            "id": "show_blog",
+            "type": "boolean",
+            "label": "إظهار آخر المقالات",
+            "default": true
+        },
+        {
+            "id": "show_newsletter",
+            "type": "boolean",
+            "label": "إظهار النشرة البريدية",
+            "default": true
+        },
+        {
+            "id": "product_columns_desktop",
+            "type": "items",
+            "format": "dropdown-list",
+            "label": "عدد أعمدة المنتجات",
+            "selected": [
+                { "label": "4 أعمدة", "value": "4", "key": "cols-4" }
+            ],
+            "options": [
+                { "label": "3 أعمدة", "value": "3", "key": "cols-3" },
+                { "label": "4 أعمدة", "value": "4", "key": "cols-4" }
+            ],
+            "source": "Manual",
+            "required": true
+        },
+        {
+            "id": "show_product_rating",
+            "type": "boolean",
+            "label": "إظهار تقييم المنتج",
+            "default": true
+        },
+        {
+            "id": "show_badges",
+            "type": "boolean",
+            "label": "إظهار الشارات (جديد / خصم / نفد)",
+            "default": true
+        },
+        {
+            "id": "show_tabby",
+            "type": "boolean",
+            "label": "إظهار شارة Tabby للتقسيط",
+            "default": true
+        },
+        {
+            "id": "show_tamara",
+            "type": "boolean",
+            "label": "إظهار شارة Tamara للتقسيط",
+            "default": true
+        },
+        {
+            "id": "show_whatsapp_button",
+            "type": "boolean",
+            "label": "إظهار زر واتساب العائم",
+            "default": true
+        },
+        {
+            "id": "whatsapp_number",
+            "type": "text",
+            "label": "رقم واتساب (مع كود الدولة)",
+            "default": ""
+        },
+        {
+            "id": "footer_bg",
+            "type": "color",
+            "label": "خلفية الفوتر",
+            "default": "#1A1A2E"
+        },
+        {
+            "id": "footer_text_color",
+            "type": "color",
+            "label": "لون نص الفوتر",
+            "default": "#FFFFFF"
+        },
+        {
+            "id": "footer_copyright",
+            "type": "text",
+            "label": "نص حقوق الملكية",
+            "default": "© 2025 متجرك. جميع الحقوق محفوظة."
+        },
+        {
+            "id": "show_payment_icons",
+            "type": "boolean",
+            "label": "إظهار أيقونات الدفع",
+            "default": true
+        },
+        {
+            "id": "gtm_id",
+            "type": "text",
+            "label": "Google Tag Manager ID",
+            "default": ""
+        },
+        {
+            "id": "meta_pixel_id",
+            "type": "text",
+            "label": "Meta Pixel ID",
+            "default": ""
+        },
+        {
+            "id": "snapchat_pixel_id",
+            "type": "text",
+            "label": "Snapchat Pixel ID",
+            "default": ""
+        },
+        {
+            "id": "tiktok_pixel_id",
+            "type": "text",
+            "label": "TikTok Pixel ID",
+            "default": ""
+        }
+    ]
 }
